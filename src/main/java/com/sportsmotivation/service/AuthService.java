@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class AuthService {
@@ -70,11 +69,11 @@ public class AuthService {
         claims.put("tokenType", "ACCESS");
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(user.getId().toString())
-                .setIssuer(issuer)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
+                .claims(claims)
+                .subject(user.getId().toString())
+                .issuer(issuer)
+                .issuedAt(now)
+                .expiration(expiry)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -93,11 +92,11 @@ public class AuthService {
         claims.put("tokenId", tokenId);
 
         String refreshToken = Jwts.builder()
-                .setClaims(claims)
-                .setSubject(user.getId().toString())
-                .setIssuer(issuer)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
+                .claims(claims)
+                .subject(user.getId().toString())
+                .issuer(issuer)
+                .issuedAt(now)
+                .expiration(expiry)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
 
@@ -305,11 +304,11 @@ public class AuthService {
     // Private helper methods
 
     private Claims validateAndParseClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     private String determineUserRole(User user) {
