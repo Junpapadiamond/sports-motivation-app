@@ -1,0 +1,171 @@
+# Development Environment Configuration
+spring:
+  # Database Configuration for Development
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sports_motivation_dev
+    username: sports_user
+    password: sports_password
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+
+  # JPA Configuration for Development
+  jpa:
+    hibernate:
+      ddl-auto: update # Auto-create tables in dev
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+  # Redis Configuration for Development
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: # No password in dev
+      timeout: 1000ms
+
+  # H2 Console for Development (if using H2)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  # Development-specific web configuration
+  web:
+    resources:
+      cache:
+        period: 0 # No caching in dev for hot reload
+
+  # DevTools Configuration
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+      exclude: static/**,public/**
+
+# JWT Configuration for Development
+jwt:
+  secret: ZGV2ZWxvcG1lbnQtc2VjcmV0LWtleS1mb3Itand0LXRva2Vucy1zcG9ydHMtbW90aXZhdGlvbg==
+  expiration:
+    seconds: 7200 # 2 hours in dev for convenience
+
+# OpenAI Configuration for Development
+openai:
+  api:
+    key: ${OPENAI_API_KEY:sk-test-key} # Use test key or mock in dev
+    timeout: 10s
+  model: gpt-3.5-turbo # Use cheaper model in dev
+
+# YouTube API Configuration for Development
+youtube:
+  api:
+    key: ${YOUTUBE_API_KEY:AIza-dev-key}
+    quota:
+      daily-limit: 1000 # Lower limit in dev
+
+# Recommendation Configuration for Development
+recommendation:
+  cache:
+    ttl: 5 # 5 minutes cache in dev for testing
+  default:
+    count: 5 # Fewer recommendations in dev
+
+# Analytics Configuration for Development
+analytics:
+  batch-size: 100 # Smaller batches in dev
+  retention:
+    days: 30 # Shorter retention in dev
+
+# Async Configuration for Development
+async:
+  core-pool-size: 2
+  max-pool-size: 4
+  queue-capacity: 50
+
+# Logging Configuration for Development
+logging:
+  level:
+    com.sportsmotivation: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
+
+# Server Configuration for Development
+server:
+  port: 8080
+  error:
+    include-stacktrace: always
+    include-message: always
+
+# CORS Configuration for Development
+cors:
+  allowed-origins:
+    - http://localhost:3000
+    - http://localhost:3001
+    - http://127.0.0.1:3000
+  allowed-methods: "*"
+  allowed-headers: "*"
+  allow-credentials: true
+
+# Content Management for Development
+content:
+  scraping:
+    enabled: false # Disable scraping in dev to avoid API quotas
+    interval: PT24H # Once per day if enabled
+  video:
+    max-duration-seconds: 1800 # 30 minutes max in dev
+
+# Mock Services Configuration
+mock:
+  enabled: true # Enable mock services in dev
+  openai:
+    enabled: ${MOCK_OPENAI:false}
+  youtube:
+    enabled: ${MOCK_YOUTUBE:false}
+
+# Development Database Initialization
+sql:
+  init:
+    mode: always
+    schema-locations: classpath:schema-dev.sql
+    data-locations: classpath:data-dev.sql
+
+# Actuator Configuration for Development
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*" # Expose all endpoints in dev
+  endpoint:
+    health:
+      show-details: always
+    shutdown:
+      enabled: true
+
+# Feature Flags for Development
+features:
+  recommendation-engine: true
+  analytics-dashboard: true
+  real-time-notifications: true
+  a-b-testing: false # Disable A/B testing in dev
+  content-scraping: false # Disable to save API quotas
+  mock-data-generation: true # Enable mock data in dev
+
+# Development-specific settings
+dev:
+  auto-generate-test-data: true
+  test-users:
+    count: 10
+  test-videos:
+    count: 50
+  simulation:
+    enabled: true
+    user-interactions-per-minute: 5

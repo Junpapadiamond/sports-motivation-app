@@ -1,0 +1,237 @@
+# Main Application Configuration
+spring:
+  application:
+    name: sports-motivation-app
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # Database Configuration
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/sports_motivation}
+    username: ${DATABASE_USERNAME:sports_user}
+    password: ${DATABASE_PASSWORD:sports_password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      connection-timeout: 30000
+      leak-detection-threshold: 60000
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 25
+          order_inserts: true
+          order_updates: true
+    open-in-view: false
+
+  # Redis Configuration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+          max-wait: 2000ms
+
+  # Cache Configuration
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000 # 10 minutes default
+      key-prefix: "sports_app:"
+      cache-null-values: false
+
+  # Web Configuration
+  web:
+    resources:
+      add-mappings: true
+      cache:
+        period: 86400 # 1 day for static resources
+
+  # Security Configuration
+  security:
+    require-ssl: false # Set to true in production
+
+  # Flyway Database Migration
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
+  # Actuator Configuration
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info,metrics,prometheus
+        base-path: /actuator
+    endpoint:
+      health:
+        show-details: when-authorized
+    metrics:
+      export:
+        prometheus:
+          enabled: true
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:c3BvcnRzLW1vdGl2YXRpb24tYXBwLXNlY3JldC1rZXktZm9yLWp3dC10b2tlbnM=}
+  expiration:
+    seconds: ${JWT_EXPIRATION_SECONDS:3600} # 1 hour
+  refresh:
+    expiration:
+      seconds: ${JWT_REFRESH_EXPIRATION_SECONDS:604800} # 7 days
+  issuer: ${JWT_ISSUER:sports-motivation-app}
+
+# Authentication & Security
+auth:
+  rate-limit:
+    max-attempts: ${AUTH_MAX_ATTEMPTS:5}
+    window-minutes: ${AUTH_WINDOW_MINUTES:15}
+  password:
+    min-length: 8
+    require-special-chars: true
+
+# OpenAI Configuration
+openai:
+  api:
+    key: ${OPENAI_API_KEY:}
+    base-url: ${OPENAI_BASE_URL:https://api.openai.com/v1}
+    timeout: 30s
+  model: ${OPENAI_MODEL:gpt-4}
+  recommendation:
+    max-tokens: 500
+    temperature: 0.7
+
+# YouTube Data API Configuration
+youtube:
+  api:
+    key: ${YOUTUBE_API_KEY:}
+    application-name: ${YOUTUBE_APP_NAME:Sports-Motivation-App}
+    quota:
+      daily-limit: ${YOUTUBE_QUOTA_LIMIT:10000}
+      requests-per-second: 100
+
+# Recommendation System Configuration
+recommendation:
+  cache:
+    ttl: ${RECOMMENDATION_CACHE_TTL:30} # minutes
+  default:
+    count: ${RECOMMENDATION_COUNT:10}
+  algorithms:
+    openai:
+      weight: 0.7
+    collaborative:
+      weight: 0.2
+    trending:
+      weight: 0.1
+  refresh:
+    interval: ${RECOMMENDATION_REFRESH_INTERVAL:PT1H} # 1 hour
+
+# Analytics Configuration
+analytics:
+  batch-size: ${ANALYTICS_BATCH_SIZE:1000}
+  retention:
+    days: ${ANALYTICS_RETENTION_DAYS:90}
+  user-segments:
+    power-user-threshold: 0.8
+    engaged-user-threshold: 0.6
+    casual-user-threshold: 0.3
+  real-time:
+    window-minutes: 60
+
+# Async Configuration
+async:
+  core-pool-size: ${ASYNC_CORE_POOL_SIZE:4}
+  max-pool-size: ${ASYNC_MAX_POOL_SIZE:8}
+  queue-capacity: ${ASYNC_QUEUE_CAPACITY:100}
+  thread-name-prefix: "Async-"
+
+# Scheduling Configuration
+scheduling:
+  pool:
+    size: ${SCHEDULING_POOL_SIZE:3}
+
+# Logging Configuration
+logging:
+  level:
+    com.sportsmotivation: INFO
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: ${LOG_FILE:logs/sports-motivation-app.log}
+    max-size: 100MB
+    max-history: 30
+
+# Server Configuration
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: ${CONTEXT_PATH:/api}
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+  http2:
+    enabled: true
+
+# CORS Configuration
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:3001}
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  allowed-headers: "*"
+  allow-credentials: true
+  max-age: 3600
+
+# Content Management
+content:
+  video:
+    max-duration-seconds: 3600 # 1 hour max
+    supported-categories: NBA,NFL,Soccer,Tennis,Baseball,Basketball,Football,Hockey,Golf
+    quality-threshold: 0.3 # Minimum completion rate
+  scraping:
+    enabled: ${CONTENT_SCRAPING_ENABLED:true}
+    interval: ${CONTENT_SCRAPING_INTERVAL:PT6H} # Every 6 hours
+    max-videos-per-category: 50
+
+# WebSocket Configuration
+websocket:
+  allowed-origins: ${WS_ALLOWED_ORIGINS:http://localhost:3000}
+  heartbeat:
+    interval: 30000 # 30 seconds
+
+# Error Handling
+error:
+  include-stacktrace: never
+  include-message: always
+  include-binding-errors: always
+
+# Feature Flags
+features:
+  recommendation-engine: ${FEATURE_RECOMMENDATIONS:true}
+  analytics-dashboard: ${FEATURE_ANALYTICS:true}
+  real-time-notifications: ${FEATURE_REALTIME:true}
+  a-b-testing: ${FEATURE_AB_TESTING:true}
+  content-scraping: ${FEATURE_SCRAPING:true}
