@@ -1,9 +1,22 @@
 # Compiled class files
 *.class
-target/
+
+# Package Files (but keep Maven wrapper JAR)
 *.jar
 *.war
+*.nar
 *.ear
+*.zip
+*.tar.gz
+*.rar
+# Exception: Keep Maven wrapper JAR
+!.mvn/wrapper/maven-wrapper.jar
+
+# Maven target directory
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
 # IDE files
 .idea/
@@ -11,30 +24,87 @@ target/
 *.iml
 *.iws
 *.ipr
+*.swp
+*.swo
+*~
 
 # OS files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
 # Application properties with secrets
 application-prod.yml
 application-local.yml
+application-*.properties
+!application.properties
+!application.yml
+!application-dev.yml
 
 # Logs
 logs/
 *.log
+*.log.*
 
-# Database
+# Database files
 *.db
 *.sqlite
-
-# Maven
-mvn/
-mvnw
-mvnw.cmd
+*.sqlite3
 
 # Spring Boot
 HELP.md
+.gradle/
+build/
 
 # Environment variables
 .env
+.env.local
+.env.*.local
+
+# Backup files
+*.bak
+*.backup
+*.tmp
+
+# Test output
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage reports
+.nyc_output/
+coverage/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+
+# Redis dump file
+dump.rdb
+
+# JVM crash logs
+hs_err_pid*
+
+# MacOS
+.AppleDouble
+.LSOverride
+
+# Windows
+[Tt]humbs.db
+[Tt]humbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
